@@ -1,0 +1,28 @@
+version: '3.2'
+services:
+  mongodb:
+    image: mongo
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - /usr/local/egg-app/mongo/backup/o45:/mongo/backup/o45
+      - /usr/local/egg-app/mongo/data/db:/data/db
+    networks: # 加入指定网络
+      - app-network
+  server:
+    image: egg-server
+    volumes:
+      - /usr/local/egg-app/run:/egg-app/run
+      - /usr/local/egg-app/logs/server:/root/logs/server
+    build: ./
+    restart: always
+    links:
+      - mongodb
+    ports:
+      - '7001:7001'
+    networks: # 加入指定网络
+      - app-network
+networks: # 实现通信
+  app-network:
+    driver: bridge
